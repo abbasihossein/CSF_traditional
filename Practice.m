@@ -1,4 +1,4 @@
-function [done,New_vbl] = Practice(screen_info,stimuli_info,Practice_info)
+function [done,New_vbl] = Practice(screen_info,stimuli_info,FAKEstim_path)
 %------------------------------------------
 %    target and no target locations in practice phase %%
 %------------------------------------------
@@ -29,9 +29,9 @@ for trl = 1:Practice_info.Practice_trl_Nr
     noTarget_Locations{trl} = stimuli_info.All_Stim_positions(noTargLoc_idx(:,trl),:);
 end
 
-Practice_info.Fake_Gabors_list = dir(fullfile(Practice_info.stim_path, '*.png'));
+Practice_info.Fake_Gabors_list = dir(fullfile(FAKEstim_path, '*.png'));
 for i = 1:numel(Practice_info.Fake_Gabors_list)
-    Practice_info.Fake_Gabors{i} = imread(fullfile(Practice_info.stim_path, Practice_info.Fake_Gabors_list(i).name));
+    Practice_info.Fake_Gabors{i} = imread(fullfile(FAKEstim_path, Practice_info.Fake_Gabors_list(i).name));
     disp(['Image ', num2str(i), ': ', Practice_info.Fake_Gabors_list(i).name]);
 end
 %%
