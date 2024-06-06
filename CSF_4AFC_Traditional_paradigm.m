@@ -10,7 +10,7 @@
 %%to keep this vale at 60.
 
 %%Test consists of nine blocks, each block with one constant spatial
-%%frequency ([0.5 1 2 4 8 12 16 18 24]).
+%%frequency ([0.5 1 2 4 8 12 18 24 28 32];).
 
 %%There is a threshold for contrast reversal (Rev_Threshold = 7; line 31 and line 527)
 %in the change in the contrast in which a block terminats and no more trial 
