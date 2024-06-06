@@ -32,7 +32,7 @@ test = false;% set it to false for the real measurement
 
 
 stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 18 24 28 32];
-stimuli_info.List_of_start_contrast = [0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 ];
+stimuli_info.List_of_start_contrast = [0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05];
 
 
 Screen('Preference', 'SkipSyncTests', 1);
