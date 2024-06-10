@@ -13,7 +13,7 @@
 %%frequency ([0.5 1 2 4 8 12 18 24 28 32];).
 
 %%There is a threshold for contrast reversal (Rev_Threshold = 7; line 31 and line 527)
-%in the change in the contrast in which a block terminats and no more trial 
+%in the change in the contrast in which a block terminats and no more trial
 %in that spatial frequency is presented. (this part is not activated and is not used)
 
 %%Trial number hast to be an a factor of 4,the distance of the participants'
@@ -32,7 +32,7 @@ test = false;% set it to false for the real measurement
 
 
 stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 18 24 28 32];
-stimuli_info.List_of_start_contrast = [0.03 0.015 0.0025 0.00025 0.008 0.04 0.2 0.3 0.3 0.3];
+stimuli_info.List_of_start_contrast = [0.03 0.015 0.0025 0.00025 0.008 0.04 0.2 0.2 0.23 0.26];
 
 
 Screen('Preference', 'SkipSyncTests', 1);
@@ -123,7 +123,7 @@ if ~test
 else
     Get_Inp.experimenter = 'Hossein';
     Get_Inp.VP_id = 100;
-    nTrials = 16; % trial numbers
+    nTrials = 8; % trial numbers
     screen_info.Dist_from_screen = 80; %distance between the participants eyes and the screen in cm
     stimuli_info.STIM_size = 3; %the size of the target in degree
     stimuli_info.STIM_loc = 5; %the distance between the center of the target and the center of the display
@@ -304,7 +304,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
     
     %%
     stimuli_info.sz = [1 nTrials];
-    stimuli_info.ISI = unifrnd(0.400, 0.500,stimuli_info.sz);%% ISI between 600 and 900 ms.
+    stimuli_info.ISI = unifrnd(0.500, 0.700,stimuli_info.sz);%% ISI between 600 and 900 ms.
     stimuli_info.ISI_ms = stimuli_info.ISI*1000;
     stimuli_info.isiTimeFrames = round(stimuli_info.ISI / screen_info.ifi);
     
@@ -324,9 +324,12 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
         %------------------------------------------
         SetMouse(screen_info.xCenter, screen_info.yCenter, screen_info.window);
         if trl ==1
+            BBB = num2str(BLOCK); AllBBB = num2str(length(stimuli_info.List_of_Freqs_cpd));
+            MSG = ['Block ' BBB '/' AllBBB];
             for frm = 1:20
                 [mx, my, ~] = GetMouse(screen_info.screenNumber);
                 Screen('TextSize', screen_info.window, 50);
+                DrawFormattedText(screen_info.window, MSG, 'center', screen_info.yCenter-150, screen_info.black);
                 DrawFormattedText(screen_info.window, 'Click to start!', 'center', 'center', screen_info.black);
                 Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
@@ -337,33 +340,34 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
                 
                 [mx, my, buttons] = GetMouse(screen_info.screenNumber);
                 Screen('TextSize', screen_info.window, 50);
+                DrawFormattedText(screen_info.window, MSG, 'center', screen_info.yCenter-150, screen_info.black);
                 DrawFormattedText(screen_info.window, 'Click to start!', 'center', 'center', screen_info.black);
                 Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
                 
                 
-%                 % Capture the screen content
-%                 startt = Screen('GetImage', screen_info.window);
-%                 % Save the image
-%                 imwrite(startt, 'startt.png');
-
-
+                %                 % Capture the screen content
+                %                 startt = Screen('GetImage', screen_info.window);
+                %                 % Save the image
+                %                 imwrite(startt, 'startt.png');
+                
+                
                 if sum(buttons) > 0
                     clickOccurred = true;
                 end
             end
         end
         
-        for frm = 1:stimuli_info.isiTimeFrames(trl)
+        for frm = 1:screen_info.frequency*(0.5)
             Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
         end
         
         %------------------------------------------
-        %    Draw placeholders
+        %    Draw placeholders pre-stimulus
         %------------------------------------------
         
-        for frm = 1:screen_info.frequency*(0.5) % duration 500ms
+        for frm = 1:stimuli_info.isiTimeFrames(trl)
             Screen('DrawTexture', screen_info.window, HouseFrame_Texture, [], Houserect);
             Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
             for i = 1:stimuli_info.Loc_Nr
@@ -371,11 +375,11 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             end
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             
-%             % Capture the screen content
-%                 placeH = Screen('GetImage', screen_info.window);
-%                 % Save the image
-%                 imwrite(placeH, 'placeH.png');
-                
+            %             % Capture the screen content
+            %                 placeH = Screen('GetImage', screen_info.window);
+            %                 % Save the image
+            %                 imwrite(placeH, 'placeH.png');
+            
         end
         
         SetMouse(screen_info.xCenter, screen_info.yCenter, screen_info.window);
@@ -388,7 +392,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
         Screen('BlendFunction', screen_info.window, 'GL_ONE', 'GL_ZERO');
         stimuli_info.propertiesMat = [stimuli_info.phase, This_Freq, stimuli_info.sigma, This_Contrast, stimuli_info.aspectRatio, 0, 0, 0];
         
-        sec1 = GetSecs;
+        %         sec1 = GetSecs;
         for frm = 1:stimuli_info.stimDuration_Frames
             Screen('DrawTexture', screen_info.window, HouseFrame_Texture, [], Houserect);
             Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
@@ -399,15 +403,32 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
                 Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
             end
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-
-%             % Capture the screen content
-%                 stimul = Screen('GetImage', screen_info.window);
-%                 % Save the image
-%                 imwrite(stimul, 'stimul.png');
-     
+            
+            %             % Capture the screen content
+            %                 stimul = Screen('GetImage', screen_info.window);
+            %                 % Save the image
+            %                 imwrite(stimul, 'stimul.png');
+            
         end
-        sec2 = GetSecs;
-        StimPre_tim {BLOCK}(trl) = sec2-sec1;
+        %         sec2 = GetSecs;
+        %         StimPre_tim {BLOCK}(trl) = sec2-sec1;
+        
+        
+        %------------------------------------------
+        %    Draw placeholders post-stimulus
+        %------------------------------------------
+        
+        for frm = 1:screen_info.frequency*(0.3)
+            Screen('DrawTexture', screen_info.window, HouseFrame_Texture, [], Houserect);
+            Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
+            for i = 1:stimuli_info.Loc_Nr
+                Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
+            end
+            screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        end
+        
+        
+        
         %------------------------------------------
         %    Show the response screen
         %------------------------------------------
@@ -430,12 +451,12 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             
-%             % Capture the screen content
-%                 RepsS = Screen('GetImage', screen_info.window);
-%                 % Save the image
-%                 imwrite(RepsS, 'RepsS.png');
-                
-                
+            %             % Capture the screen content
+            %                 RepsS = Screen('GetImage', screen_info.window);
+            %                 % Save the image
+            %                 imwrite(RepsS, 'RepsS.png');
+            
+            
             for st = 1:4
                 insides(st) = IsInRect(mx, my,Locations{trl}(st,:));
             end
@@ -447,7 +468,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             elseif index == 1 && sum(buttons) ==1% if the target is selected
                 clickOccurred = true;
                 ThisACC = 1;
-                for frm = 1:screen_info.frequency
+                for frm = 1:round(screen_info.frequency)
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
                     Screen('DrawTexture', screen_info.window, stimuli_info.Happy_Zebra_Texture, [], stimuli_info.feedback_Pos);
                     screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
@@ -456,7 +477,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             elseif (index > 1 && index < 5)&& sum(buttons) ==1 % if a distractor is selected
                 clickOccurred = true;
                 ThisACC = 0;
-                for frm = 1:screen_info.frequency
+                for frm = 1:round(screen_info.frequency)
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
                     Screen('DrawTexture', screen_info.window, stimuli_info.Sad_Zebra_Texture, [], stimuli_info.feedback_Pos);
                     screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
@@ -465,10 +486,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
         end
         
         SetMouse(screen_info.xCenter, screen_info.yCenter, screen_info.window);
-%         for frm = 1:screen_info.frequency/5 % stimulus duration for 200ms
-%             Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
-%             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-%         end
+        
         
         Behavioral_response.contrast{BLOCK}(trl,1) = This_Contrast;
         Behavioral_response.accuracy{BLOCK}(trl,1) = ThisACC;
@@ -492,7 +510,29 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
         end
         
         
-        
+        %------------------------------------------
+        %    A break at the middle of the experiment
+        %------------------------------------------
+        if trl  == nTrials/2
+            for frm = 1:20
+                [~, ~, buttons] = GetMouse(screen_info.screenNumber);
+                Screen('TextSize', screen_info.window, 50);
+                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to continue when ready!', 'center','center', screen_info.black);
+                screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+            end
+            
+            clickOccurred = false;
+            while ~clickOccurred
+                [mx, my, buttons] = GetMouse(screen_info.screenNumber);
+                Screen('TextSize', screen_info.window, 50);
+                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to continue when ready!', 'center','center', screen_info.black);
+                Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+                screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+                if sum(buttons) > 0
+                    clickOccurred = true;
+                end
+            end
+        end
         
         %------------------------------------------
         %    Screen for finishing the experiment
@@ -523,7 +563,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             for frm = 1:20
                 [~, ~, buttons] = GetMouse(screen_info.screenNumber);
                 Screen('TextSize', screen_info.window, 50);
-                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
+                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when ready!', 'center','center', screen_info.black);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             end
             
@@ -531,7 +571,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             while ~clickOccurred
                 [mx, my, buttons] = GetMouse(screen_info.screenNumber);
                 Screen('TextSize', screen_info.window, 50);
-                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
+                DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when ready!', 'center','center', screen_info.black);
                 Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
                 if sum(buttons) > 0
@@ -539,50 +579,50 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
                 end
             end
         end
-      
+        
         uniqueIndices = [true; diff(Behavioral_response.contrast{BLOCK}) ~= 0];
         UniqueContrast = Behavioral_response.contrast{BLOCK}(uniqueIndices);
         
-            J = 1;
-            for i = 2:length(UniqueContrast)-1
-                if UniqueContrast(i)<UniqueContrast(i-1) && UniqueContrast(i) < UniqueContrast(i+1)
-                    ThisRevs(J) = UniqueContrast(i);
-                    J = J+1;
-                elseif UniqueContrast(i)>UniqueContrast(i-1) && UniqueContrast(i) > UniqueContrast(i+1)
-                    ThisRevs(J) = UniqueContrast(i);
-                    J = J+1;
-                end
-            end  
-            
-            RversedContrasts{BLOCK} = ThisRevs(ThisRevs ~= 0);%% remove unnecessary zeros
-%         
-%         if exist('RversedContrasts', 'var') && length (RversedContrasts{BLOCK}) > Rev_Threshold %% here a Block ends in the number of reversals meets the threshold
-%             for frm = 1:20
-%                 [~, ~, buttons] = GetMouse(screen_info.screenNumber);
-%                 Screen('TextSize', screen_info.window, 50);
-%                 DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
-%                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-%             end
-%             
-%             clickOccurred = false;
-%             while ~clickOccurred
-%                 [mx, my, buttons] = GetMouse(screen_info.screenNumber);
-%                 Screen('TextSize', screen_info.window, 50);
-%                 DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
-%                 Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
-%                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-%                 if sum(buttons) > 0
-%                     clickOccurred = true;
-%                 end
-%             end
-%             break
-%         end
+        J = 1;
+        for i = 2:length(UniqueContrast)-1
+            if UniqueContrast(i)<UniqueContrast(i-1) && UniqueContrast(i) < UniqueContrast(i+1)
+                ThisRevs(J) = UniqueContrast(i);
+                J = J+1;
+            elseif UniqueContrast(i)>UniqueContrast(i-1) && UniqueContrast(i) > UniqueContrast(i+1)
+                ThisRevs(J) = UniqueContrast(i);
+                J = J+1;
+            end
+        end
+        
+        RversedContrasts{BLOCK} = ThisRevs(ThisRevs ~= 0);%% remove unnecessary zeros
+        %
+        %         if exist('RversedContrasts', 'var') && length (RversedContrasts{BLOCK}) > Rev_Threshold %% here a Block ends in the number of reversals meets the threshold
+        %             for frm = 1:20
+        %                 [~, ~, buttons] = GetMouse(screen_info.screenNumber);
+        %                 Screen('TextSize', screen_info.window, 50);
+        %                 DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
+        %                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        %             end
+        %
+        %             clickOccurred = false;
+        %             while ~clickOccurred
+        %                 [mx, my, buttons] = GetMouse(screen_info.screenNumber);
+        %                 Screen('TextSize', screen_info.window, 50);
+        %                 DrawFormattedText(screen_info.window, 'Take a break! \n\n Click to start when you are ready!', 'center','center', screen_info.black);
+        %                 Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+        %                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        %                 if sum(buttons) > 0
+        %                     clickOccurred = true;
+        %                 end
+        %             end
+        %             break
+        %         end
     end
     
     
     
     Behavioral_response.Revs{BLOCK} = ThisRevs(ThisRevs ~= 0);%% remove unnecessary zeros
-
+    
     REVexist = ~isempty(Behavioral_response.Revs{BLOCK});
     if REVexist == 1 && length(Behavioral_response.Revs{BLOCK})>2
         Switches.USED{BLOCK} = Behavioral_response.Revs{BLOCK}(3:end);
@@ -591,7 +631,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
     elseif REVexist == 0
         Switches.USED{BLOCK} = Behavioral_response.contrast{BLOCK}(end,1);
     end
-        Behavioral_response.Contrast_Thresholds(BLOCK) = mean(Switches.USED{BLOCK});
+    Behavioral_response.Contrast_Thresholds(BLOCK) = mean(Switches.USED{BLOCK});
 end
 sca;
 %clear unnecessary variables
