@@ -32,7 +32,7 @@ test = false;% set it to false for the real measurement
 
 
 stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 18 24 28 32];
-stimuli_info.List_of_start_contrast = [0.03 0.015 0.008 0.008 0.008 0.04 0.2 0.2 0.23 0.26];
+stimuli_info.List_of_start_contrast = [0.03 0.015 0.0025 0.00025 0.008 0.04 0.2 0.2 0.23 0.26];
 
 
 Screen('Preference', 'SkipSyncTests', 1);
@@ -503,9 +503,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             if Behavioral_response.accuracy{BLOCK}(trl,1)==1 && Behavioral_response.accuracy{BLOCK}(trl-1,1)==1 && Behavioral_response.accuracy{BLOCK}(trl-2,1)==1 && (Behavioral_response.contrast{BLOCK}(trl,1) == Behavioral_response.contrast{BLOCK}(trl-1,1) && Behavioral_response.contrast{BLOCK}(trl,1) == Behavioral_response.contrast{BLOCK}(trl-2,1))
                 This_Contrast = This_Contrast-0.1*This_Contrast;
                 
-                if This_Contrast < (128-127)/(128+127) || This_Contrast == (128-127)/(128+127)
-                    This_Contrast = (128-127)/(128+127);
-                end
+                if This_Contrast < (128-127)
             end
         end
         
