@@ -27,7 +27,7 @@ close all;
 clear;
 
 do_the_practice = false;% set it to 'false' if you dont want to have practice
-test = false;% set it to false for the real measurement
+test = true;% set it to false for the real measurement
 % Rev_Threshold = 7; % Reversal threshold for the contrast
 
 
@@ -201,7 +201,7 @@ stimuli_info.gabortex = CreateProceduralGabor(screen_info.window, stimuli_info.g
 %    Other stimuli info, e.g. fixation, frames, objects etc.
 %------------------------------------------
 % fixation
-stimuli_info.FixationColor = [1 0 0];
+stimuli_info.FixationColor = [0.2 0.4 0.9];
 stimuli_info.baseRect_fixation = [0 0 50 50];
 stimuli_info.centeredFixation = CenterRectOnPointd(stimuli_info.baseRect_fixation, screen_info.xCenter, screen_info.yCenter);
 stimuli_info.DiamFixation = max(stimuli_info.baseRect_fixation);
@@ -211,8 +211,7 @@ stimuli_info.frameColor = screen_info.black;
 stimuli_info.borderThickness = 5;
 
 % response selection
-stimuli_info.RespColor = [1 0 0];
-stimuli_info.baseRect_Resp = round(screen_info.windowRect(4) / 6);
+stimuli_info.baseRect_Resp = (stimuli_info.gaborDimPix-stimuli_info.borderThickness)*2;
 
 % here we set the possible "response" positions. order in stimuli_info.All_Resp_positions: [up; right; down; left]
 for i = 1:stimuli_info.Loc_Nr
@@ -304,7 +303,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
     
     %%
     stimuli_info.sz = [1 nTrials];
-    stimuli_info.ISI = unifrnd(0.500, 0.700,stimuli_info.sz);%% ISI between 600 and 900 ms.
+    stimuli_info.ISI = unifrnd(0.800, 1.200,stimuli_info.sz);%% ISI between 600 and 900 ms.
     stimuli_info.ISI_ms = stimuli_info.ISI*1000;
     stimuli_info.isiTimeFrames = round(stimuli_info.ISI / screen_info.ifi);
     
@@ -358,10 +357,10 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             end
         end
         
-        for frm = 1:screen_info.frequency*(0.5)
-            Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
-            screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-        end
+        %         for frm = 1:screen_info.frequency*(0.5)
+        %             Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
+        %             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        %         end
         
         %------------------------------------------
         %    Draw placeholders pre-stimulus
@@ -438,16 +437,19 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             
             [mx, my, buttons] = GetMouse(screen_info.screenNumber);
             Screen('DrawTexture', screen_info.window, HouseFrame_Texture, [], Houserect);
-            Screen('TextSize', screen_info.window, 70);
-            DrawFormattedText(screen_info.window, '?', 'center', 'center', screen_info.black);
+            Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
+            
             
             for i = 1:stimuli_info.Loc_Nr
                 Screen('DrawTexture', screen_info.window, Zebra_Texture, [], stimuli_info.All_Resp_positions(i,:));
             end
             for i = 1:stimuli_info.Loc_Nr
-                Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Resp_positions(i,:), stimuli_info.borderThickness);
+                Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
             end
             Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+            
+            Screen('TextSize', screen_info.window, 60);
+            DrawFormattedText(screen_info.window, '?', 'center', 'center', screen_info.black);
             
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             
@@ -470,6 +472,9 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
                 ThisACC = 1;
                 for frm = 1:round(screen_info.frequency)
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+                    for i = 1:stimuli_info.Loc_Nr
+                        Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
+                    end
                     Screen('DrawTexture', screen_info.window, stimuli_info.Happy_Zebra_Texture, [], stimuli_info.feedback_Pos);
                     screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
                 end
@@ -479,6 +484,9 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
                 ThisACC = 0;
                 for frm = 1:round(screen_info.frequency)
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+                    for i = 1:stimuli_info.Loc_Nr
+                        Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
+                    end
                     Screen('DrawTexture', screen_info.window, stimuli_info.Sad_Zebra_Texture, [], stimuli_info.feedback_Pos);
                     screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
                 end
@@ -639,7 +647,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
 end
 sca;
 %clear unnecessary variables
-clearvars acc mx my index frm i insides POSs st This_Contrast This_Freq ThisACC trl buttons clickOccurred correct definput done fieldsize frm HouseFrame HouseFrame_Texture Houserect i idx inside_noTarg1 inside_noTarg2 inside_noTarg3
+clearvars AllBBB BBB acc mx my index frm i insides POSs st This_Contrast This_Freq ThisACC trl buttons clickOccurred correct definput done fieldsize frm HouseFrame HouseFrame_Texture Houserect i idx inside_noTarg1 inside_noTarg2 inside_noTarg3
 clearvars inside_Targ lcolor mx my New_vbl nextContrastToTest nextFreqToTest plotPriors POSs ttext xticks2 xticks3 yticks2 yticks3 Zebra Zebra_Texture
 %save data
 cd(SaveDirectory)

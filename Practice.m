@@ -62,15 +62,16 @@ for trl = 1:Practice_info.Practice_trl_Nr
         end
     end
     
-    for frm = 1:screen_info.frequency
-        Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
-        screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-    end
+    %     for frm = 1:screen_info.frequency
+    %         Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
+    %         screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+    %     end
     %------------------------------------------
     %    Draw placeholders
     %------------------------------------------
     Houserect = [screen_info.xCenter-600, screen_info.yCenter-630, screen_info.xCenter+600, screen_info.yCenter+480];
-    for frm = 1:round(screen_info.frequency*(2/3)) % stimulus duration for 500ms
+    
+    for frm = 1:round(screen_info.frequency)
         Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
         Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
         for i = 1:stimuli_info.Loc_Nr
@@ -94,7 +95,7 @@ for trl = 1:Practice_info.Practice_trl_Nr
             end
             screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
         end
-
+        
     else
         Screen('BlendFunction', screen_info.window, 'GL_ONE', 'GL_ZERO');
         stimuli_info.propertiesMat = [stimuli_info.phase, Practice_info.freq_PIxperDEG(trl), stimuli_info.sigma, Practice_info.contrast(trl), stimuli_info.aspectRatio, 0, 0, 0];
@@ -119,22 +120,28 @@ for trl = 1:Practice_info.Practice_trl_Nr
     clickOccurred = false;
     while ~clickOccurred
         
-        Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+        
         [mx, my, buttons] = GetMouse(screen_info.screenNumber);
         inside_Targ = IsInRect(mx, my, Target_Locations(trl,:));
         inside_noTarg1 = IsInRect(mx, my, noTarget_Locations{trl}(1,:));
         inside_noTarg2 = IsInRect(mx, my, noTarget_Locations{trl}(2,:));
         inside_noTarg3 = IsInRect(mx, my, noTarget_Locations{trl}(3,:));
-        Screen('TextSize', screen_info.window, 70);
-        DrawFormattedText(screen_info.window, '?', 'center', 'center', screen_info.black);
+        
+        Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+        Screen('FillOval', screen_info.window, stimuli_info.FixationColor, stimuli_info.centeredFixation, stimuli_info.DiamFixation);
         
         for i = 1:stimuli_info.Loc_Nr
             Screen('DrawTexture', screen_info.window, stimuli_info.Zebra_Texture, [], stimuli_info.All_Resp_positions(i,:));
         end
         for i = 1:stimuli_info.Loc_Nr
-            Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Resp_positions(i,:), stimuli_info.borderThickness);
+            Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
         end
+        
         Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+        Screen('TextSize', screen_info.window, 60);
+        DrawFormattedText(screen_info.window, '?', 'center', 'center', screen_info.black);
+        
+        
         screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
         
         if inside_Targ == 1 && sum(buttons) > 0
@@ -143,6 +150,9 @@ for trl = 1:Practice_info.Practice_trl_Nr
             
             for frm = 1:screen_info.frequency
                 Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+                for i = 1:stimuli_info.Loc_Nr
+                    Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
+                end
                 Screen('DrawTexture', screen_info.window, stimuli_info.Happy_Zebra_Texture, [], stimuli_info.feedback_Pos);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             end
@@ -153,6 +163,9 @@ for trl = 1:Practice_info.Practice_trl_Nr
             
             for frm = 1:screen_info.frequency
                 Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
+                for i = 1:stimuli_info.Loc_Nr
+                    Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
+                end
                 Screen('DrawTexture', screen_info.window, stimuli_info.Sad_Zebra_Texture, [], stimuli_info.feedback_Pos);
                 screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
             end
@@ -165,34 +178,34 @@ if Practice_ACC>50
     done = true;
     SetMouse(screen_info.xCenter, screen_info.yCenter, screen_info.window);
     clickOccurred = false;
-        while ~clickOccurred
-            
-            [mx, my, buttons] = GetMouse(screen_info.screenNumber);
-            
-            Screen('TextSize', screen_info.window, 50);
-            DrawFormattedText(screen_info.window, 'It seems you have learned the task.\n\n Click to start the main task!', 'center', 'center', screen_info.black);
-            Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
-            screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-            if sum(buttons) > 0
-                clickOccurred = true;
-            end
+    while ~clickOccurred
+        
+        [mx, my, buttons] = GetMouse(screen_info.screenNumber);
+        
+        Screen('TextSize', screen_info.window, 50);
+        DrawFormattedText(screen_info.window, 'It seems you have learned the task.\n\n Click to start the main task!', 'center', 'center', screen_info.black);
+        Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+        screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        if sum(buttons) > 0
+            clickOccurred = true;
         end
+    end
 else
     done = false;
     SetMouse(screen_info.xCenter, screen_info.yCenter, screen_info.window);
     clickOccurred = false;
-        while ~clickOccurred
-            
-            [mx, my, buttons] = GetMouse(screen_info.screenNumber);
-            Screen('TextSize', screen_info.window, 50);
-            DrawFormattedText(screen_info.window, 'It seems you need more practice.\n\n Click to repeat the practice phase!', 'center', 'center', screen_info.black);
-            Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
-            screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
-            
-            if sum(buttons) > 0
-                clickOccurred = true;
-            end
+    while ~clickOccurred
+        
+        [mx, my, buttons] = GetMouse(screen_info.screenNumber);
+        Screen('TextSize', screen_info.window, 50);
+        DrawFormattedText(screen_info.window, 'It seems you need more practice.\n\n Click to repeat the practice phase!', 'center', 'center', screen_info.black);
+        Screen('FillOval', screen_info.window, stimuli_info.CurserColor, [mx-stimuli_info.CurserSize/2, my-stimuli_info.CurserSize/2, mx+stimuli_info.CurserSize/2, my+stimuli_info.CurserSize/2], stimuli_info.CurserSize);
+        screen_info.vbl  = Screen('Flip', screen_info.window, screen_info.vbl + (screen_info.waitframes - 0.5) * screen_info.ifi);
+        
+        if sum(buttons) > 0
+            clickOccurred = true;
         end
+    end
 end
 New_vbl = screen_info.vbl;
 
