@@ -27,12 +27,12 @@ close all;
 clear;
 
 do_the_practice = false;% set it to 'false' if you dont want to have practice
-test = true;% set it to false for the real measurement
+test = false;% set it to false for the real measurement
 % Rev_Threshold = 7; % Reversal threshold for the contrast
 
 
-stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 18 24 28 32];
-stimuli_info.List_of_start_contrast = [0.03 0.015 0.008 0.008 0.008 0.04 0.2 0.2 0.23 0.26];
+stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 16 18 22 25];%old: [0.5 1 2 4 8 12 18 24 25 32];
+stimuli_info.List_of_start_contrast = [0.03 0.015 0.008 0.008 0.008 0.04 0.1 0.2 0.21 0.23];
 
 
 Screen('Preference', 'SkipSyncTests', 1);
@@ -470,7 +470,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             elseif index == 1 && sum(buttons) ==1% if the target is selected
                 clickOccurred = true;
                 ThisACC = 1;
-                for frm = 1:round(screen_info.frequency)
+                for frm = 1:round(screen_info.frequency*(2/3))
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
                     for i = 1:stimuli_info.Loc_Nr
                         Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
@@ -482,7 +482,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
             elseif (index > 1 && index < 5)&& sum(buttons) ==1 % if a distractor is selected
                 clickOccurred = true;
                 ThisACC = 0;
-                for frm = 1:round(screen_info.frequency)
+                for frm = 1:round(screen_info.frequency*(2/3))
                     Screen('DrawTexture', screen_info.window, stimuli_info.HouseFrame_Texture, [], Houserect);
                     for i = 1:stimuli_info.Loc_Nr
                         Screen('FrameRect', screen_info.window, stimuli_info.frameColor,stimuli_info.All_Stim_positions(i,:), stimuli_info.borderThickness);
