@@ -37,16 +37,16 @@ PsychDefaultSetup(2);
 screen_info.screenNumber = max(Screen('Screens'));
 
 %Experiment Codes path
-ExperimentCodes_path = 'D:\Hossein Abbasi\qCSF - TraditionalVersion';
+ExperimentCodes_path = 'D:\Hossein Abbasi\CSF - TraditionalVersion\CSF_traditional';
 addpath(ExperimentCodes_path);
 cd(ExperimentCodes_path)
 
 %Stroy Objects
-StroyObjects_path = 'D:\Hossein Abbasi\qCSF - TraditionalVersion\objects';
+StroyObjects_path = 'D:\Hossein Abbasi\CSF - TraditionalVersion\CSF_traditional\objects';
 addpath(StroyObjects_path)
 
 %Fake Gabors for practice
-Practice_info.stim_path = 'D:\Hossein Abbasi\qCSF - TraditionalVersion\objects\Fake Gabors';
+Practice_info.stim_path = 'D:\Hossein Abbasi\CSF - TraditionalVersion\CSF_traditional\Fake Gabors';
 addpath(StroyObjects_path)
 
 %Where to save the data
@@ -383,7 +383,7 @@ for BLOCK = 1:length(stimuli_info.List_of_Freqs_cpd)
         
         
         
-        CSs = [1 0.1 0.02 0.3 0.7 0.04 0.008 0.3];
+        CSs = [0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5];
         FRQ = stimuli_info.List_of_Freqs_PIxperDEG;
         TRGs = [screen_info.screenXpixels/5,screen_info.screenYpixels/4;...
             screen_info.screenXpixels*(2/5),screen_info.screenYpixels/4;...

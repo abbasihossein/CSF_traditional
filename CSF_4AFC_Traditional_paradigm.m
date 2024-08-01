@@ -31,7 +31,7 @@ test = false;% set it to false for the real measurement
 % Rev_Threshold = 7; % Reversal threshold for the contrast
 
 
-stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 16 18 22 25];%old: [0.5 1 2 4 8 12 18 24 25 32];
+stimuli_info.List_of_Freqs_cpd = [0.5 1 2 4 8 12 15 18 21 24];
 stimuli_info.List_of_start_contrast = [0.03 0.015 0.008 0.008 0.008 0.04 0.1 0.2 0.21 0.23];
 
 
